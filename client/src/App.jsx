@@ -232,7 +232,7 @@ export default function App() {
           Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
+          access_key: import.meta.env.WEB3FORMS_ACCESS_KEY,
           name: formData.name,
           email: formData.email,
           message: formData.message,

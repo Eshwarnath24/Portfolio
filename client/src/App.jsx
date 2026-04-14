@@ -123,7 +123,7 @@ const FadeInSection = ({ children, delay = 0, direction = 'up' }) => {
   );
 };
 
-const SpotlightCard = ({ children, className = "", isDark = false }) => {
+const SpotlightCard = ({ children, className = "", isDark = false, showLightDots = false }) => {
   const divRef = useRef(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
@@ -147,7 +147,15 @@ const SpotlightCard = ({ children, className = "", isDark = false }) => {
       } ${className}`}
     >
       <div
-        className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 z-0"
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          opacity: !isDark && showLightDots ? 0.50 : 0,
+          backgroundImage: 'radial-gradient(rgba(15, 23, 42, 0.18) 0.9px, transparent 0.9px)',
+          backgroundSize: '20px 20px',
+        }}
+      />
+      <div
+        className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 z-[1]"
         style={{
           opacity,
           background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${isDark ? 'rgba(99, 102, 241, 0.15)' : 'rgba(99, 102, 241, 0.16)'}, transparent 40%)`,
@@ -163,9 +171,16 @@ const SpotlightCard = ({ children, className = "", isDark = false }) => {
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const [scales, setScales] = useState({});
   const containerRefs = useRef({});
+  
+  // Contact form state
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const shouldLoadExternalPreviews = import.meta.env.PROD;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -202,6 +217,42 @@ export default function App() {
     const element = document.getElementById(id);
     if (element) element.scrollIntoView({ behavior: 'smooth' });
     setIsMenuOpen(false);
+  };
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // Sending email using Web3Forms
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          subject: "New Contact Message from Portfolio",
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setIsSubmitted(true);
+      } else {
+        console.error("Error submitting form", result);
+        alert("Something went wrong! Please try again or email me directly.");
+      }
+    } catch (error) {
+      console.error("Error submitting form", error);
+      alert("Something went wrong! Please try again or email me directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const themeClasses = isDark 
@@ -395,7 +446,7 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {SKILLS.map((category, idx) => (
               <FadeInSection key={idx} delay={idx * 100}>
-                <SpotlightCard className="h-full" isDark={isDark}>
+                <SpotlightCard className="h-full" isDark={isDark} showLightDots>
                   <div className={`absolute inset-0 bg-[radial-gradient(#888888_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none transition-opacity ${isDark ? 'opacity-20' : 'opacity-10'}`}></div>
                   <div className="p-8 md:p-10 h-full flex flex-col relative z-10">
                     <div className="flex items-center gap-6 mb-8">
@@ -437,7 +488,7 @@ export default function App() {
             {PROJECTS.map((project, idx) => (
               <FadeInSection key={idx} delay={idx * 150}>
                 <SpotlightCard className="p-6 md:p-8" isDark={isDark}>
-                  <div className="flex flex-col md:flex-row gap-8 lg:gap-12 h-full items-center">
+                  <div className="flex flex-col md:flex-row gap-8 lg:gap-12 h-full items-center md:items-start">
                     {project.liveUrl ? (
                       <div className={`w-full ${project.isMobile ? 'max-w-[300px] sm:max-w-[340px] mx-auto' : 'md:w-[45%] lg:w-[50%]'} flex-shrink-0`}>
                         <div className={`w-full transition-all duration-700 ${
@@ -502,20 +553,26 @@ export default function App() {
 
                              <a href={project.liveUrl} target="_blank" rel="noreferrer" className="absolute inset-0 z-30 cursor-pointer hover:bg-indigo-500/5 transition-colors duration-300"></a>
                              
-                             <iframe 
-                                title={project.title}
-                                src={project.liveUrl} 
-                                className="preview-window-fixed pointer-events-none z-10 bg-white"
-                                style={{ 
-                                  width: project.isMobile ? '375px' : '1440px',
-                                  height: project.isMobile ? '708px' : '900px', 
-                                  top: project.isMobile ? '104px' : '0px', 
-                                  transform: `scale(${scales[project.id] || 0.5})` 
-                                }}
-                                loading="lazy" 
-                                scrolling="no" 
-                                tabIndex={-1} 
-                             />
+                             {shouldLoadExternalPreviews ? (
+                                <iframe 
+                                  title={project.title}
+                                  src={project.liveUrl} 
+                                  className="preview-window-fixed pointer-events-none z-10 bg-white"
+                                  style={{ 
+                                    width: project.isMobile ? '375px' : '1440px',
+                                    height: project.isMobile ? '708px' : '900px', 
+                                    top: project.isMobile ? '104px' : '0px', 
+                                    transform: `scale(${scales[project.id] || 0.5})` 
+                                  }}
+                                  loading="lazy" 
+                                  scrolling="no" 
+                                  tabIndex={-1} 
+                                />
+                              ) : (
+                                <div className={`absolute inset-0 z-10 flex items-center justify-center px-6 text-center ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                                  <p className="text-sm font-medium">Preview disabled in development. Open the live link to view the project.</p>
+                                </div>
+                              )}
 
                              {project.isMobile && (
                                 <div className={`absolute bottom-2 left-1/2 -translate-x-1/2 w-[35%] h-1 rounded-full z-30 pointer-events-none transition-colors ${
@@ -574,13 +631,19 @@ export default function App() {
                     <SpotlightCard className="p-0 h-full flex flex-col" isDark={isDark}>
                       <div className={`aspect-[4/3] border-b relative overflow-hidden transition-colors ${isDark ? 'bg-[#030712] border-slate-800/80' : 'bg-slate-200 border-slate-300 shadow-inner'}`}>
                         <div className="absolute inset-0 z-30 bg-black/0"></div>
-                        <iframe 
-                          title={`${cert.name} preview`}
-                          src={cert.url.replace('/view?usp=sharing', '/preview')} 
-                          className="absolute w-[150%] h-[150%] top-0 left-0 border-none opacity-80 pointer-events-none" 
-                          style={{ transform: 'scale(0.666)', transformOrigin: 'top left' }}
-                          loading="lazy" scrolling="no" tabIndex={-1} 
-                        />
+                        {shouldLoadExternalPreviews ? (
+                          <iframe 
+                            title={`${cert.name} preview`}
+                            src={cert.url.replace('/view?usp=sharing', '/preview')} 
+                            className="absolute w-[150%] h-[150%] top-0 left-0 border-none opacity-80 pointer-events-none" 
+                            style={{ transform: 'scale(0.666)', transformOrigin: 'top left' }}
+                            loading="lazy" scrolling="no" tabIndex={-1} 
+                          />
+                        ) : (
+                          <div className={`absolute inset-0 z-10 flex items-center justify-center px-6 text-center ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+                            <p className="text-sm font-medium">Preview disabled in development. Open the certificate link to view.</p>
+                          </div>
+                        )}
                       </div>
                       <div className="p-6 flex items-center justify-between">
                         <div className="flex items-center gap-4">
@@ -613,11 +676,57 @@ export default function App() {
               <p className={`text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed transition-colors ${isDark ? 'text-slate-400' : 'text-slate-700'}`}>
                 I'm actively looking for internship opportunities where I can contribute to meaningful projects. My inbox is always open!
               </p>
-              <a href="mailto:gajulaeshwarnath24@gmail.com" className={`group inline-flex items-center gap-3 px-8 py-4 rounded-xl font-bold transition-all duration-300 shadow-xl ${
-                isDark ? 'bg-slate-100 hover:bg-white text-slate-900 shadow-white/10' : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-300'
-              }`}>
-                <Mail size={20} /> Say Hello <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform opacity-50" />
-              </a>
+
+              {!showForm && !isSubmitted ? (
+                <button type="button" onClick={() => setShowForm(true)} className={`group inline-flex items-center gap-3 px-8 py-4 rounded-xl font-bold transition-all duration-300 shadow-xl ${
+                  isDark ? 'bg-slate-100 hover:bg-white text-slate-900 shadow-white/10' : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-300'
+                }`}>
+                  <Mail size={20} /> Say Hello <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform opacity-50" />
+                </button>
+              ) : isSubmitted ? (
+                 <div className={`p-8 md:p-12 rounded-2xl border backdrop-blur-sm transition-all duration-500 shadow-xl ${isDark ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-600'}`}>
+                    <h3 className="text-3xl font-bold mb-4">Message Sent!</h3>
+                    <p className={`text-lg mb-8 ${isDark ? 'text-emerald-300/80' : 'text-emerald-600/80'}`}>Thank you for reaching out. I'll get back to you as soon as possible.</p>
+                    <button onClick={() => {setShowForm(false); setIsSubmitted(false); setFormData({name: '', email: '', message: ''});}} className="text-sm font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity">Send another message</button>
+                 </div>
+              ) : (
+                <form onSubmit={handleContactSubmit} className={`text-left p-6 md:p-8 mt-8 rounded-2xl border backdrop-blur-sm shadow-2xl transition-all duration-500 ${
+                  isDark ? 'bg-[#0f1524]/60 border-slate-800' : 'bg-white/80 border-slate-200'
+                }`}>
+                  <div className="mb-6">
+                    <label htmlFor="name" className={`block text-sm font-semibold mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Name</label>
+                    <input type="text" id="name" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-indigo-500 outline-none transition-all ${
+                      isDark ? 'bg-[#0a0e17] border-slate-700 text-white focus:border-indigo-500' : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-indigo-400'
+                    }`} placeholder="John Doe" />
+                  </div>
+                  <div className="mb-6">
+                    <label htmlFor="email" className={`block text-sm font-semibold mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Email</label>
+                    <input type="email" id="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-indigo-500 outline-none transition-all ${
+                      isDark ? 'bg-[#0a0e17] border-slate-700 text-white focus:border-indigo-500' : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-indigo-400'
+                    }`} placeholder="john@example.com" />
+                  </div>
+                  <div className="mb-8">
+                    <label htmlFor="message" className={`block text-sm font-semibold mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Message</label>
+                    <textarea id="message" required rows="4" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} className={`w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none ${
+                      isDark ? 'bg-[#0a0e17] border-slate-700 text-white focus:border-indigo-500' : 'bg-slate-50 border-slate-300 text-slate-900 focus:border-indigo-400'
+                    }`} placeholder="Hi Eshwarnath..."></textarea>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button type="submit" disabled={isSubmitting} className={`flex-1 flex justify-center items-center gap-2 py-3.5 rounded-xl font-bold transition-all duration-300 shadow-xl ${
+                      isSubmitting ? 'opacity-70 cursor-not-allowed' : '' 
+                    } ${
+                      isDark ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-500/20' : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-300'
+                    }`}>
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
+                    </button>
+                    <button type="button" onClick={() => setShowForm(false)} className={`sm:w-32 py-3.5 rounded-xl font-bold border transition-all duration-300 ${
+                      isDark ? 'border-slate-700 text-slate-300 hover:bg-slate-800' : 'border-slate-300 text-slate-600 hover:bg-slate-50'
+                    }`}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </FadeInSection>
         </section>

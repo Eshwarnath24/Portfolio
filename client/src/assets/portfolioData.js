@@ -98,6 +98,21 @@ export const PROJECTS = [
 		isMobile: true,
 	},
 	{
+		id: "medical-website",
+		title: "CareConnect",
+		duration: "Jan 2025 - Feb 2025",
+		description: [
+			"Built a multi-page healthcare web application from scratch using pure HTML, CSS, and JavaScript with a fully custom UI design.",
+			"Implemented complete user workflows including authentication, doctor consultation booking, medicine and lab test ordering with dynamic cart handling.",
+			"Designed and developed all interface components, styling, and interactive features manually, including custom alerts and validation flows.",
+			"Managed application state using browser localStorage to ensure seamless user sessions, data persistence, and transaction handling.",
+		],
+		tags: ["HTML5", "CSS3", "JavaScript (ES modules)",],
+		githubUrl: "https://github.com/Eshwarnath24/Medical-Website",
+		liveUrl: "https://medical-website-lyart-two.vercel.app/",
+		isMobile: false,
+	},
+	{
 		id: "banking",
 		title: "Banking Cash Flow Minimizer",
 		duration: "Oct 2024",
@@ -108,7 +123,7 @@ export const PROJECTS = [
 		tags: ["Python", "Graphs", "Greedy Algorithm", "DSA"],
 		githubUrl: "https://github.com/Eshwarnath24/Cash-Flow-Minimizer/",
 		isMobile: false,
-	},
+	}
 ];
 
 export const CERTIFICATIONS = [

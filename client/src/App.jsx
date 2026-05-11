@@ -277,7 +277,7 @@ export default function App() {
       } py-4`}>
         <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <div className="flex-shrink-0 cursor-pointer group flex items-center gap-3" onClick={() => scrollToSection('home')}>
+            <div className="flex-shrink-0 cursor-pointer group flex items-center gap-3" onClick={() => scrollToSection('about')}>
               <div className={`w-8 h-8 rounded border flex items-center justify-center transition-colors ${
                 isDark ? 'bg-slate-800 border-slate-700 group-hover:border-slate-500' : 'bg-white border-slate-300 group-hover:border-indigo-500'
               }`}>
@@ -336,7 +336,7 @@ export default function App() {
 
       <main className="relative z-10">
         {/* Hero Section */}
-        <section id="home" className="min-h-screen flex items-center pt-20 px-4 max-w-[85rem] mx-auto">
+        <section id="about" className="min-h-screen flex items-center pt-20 px-4 max-w-[85rem] mx-auto">
           <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-10 md:gap-16 w-full py-12">
             <div className="flex-1 max-w-3xl relative z-10">
               <FadeInSection delay={100}>
@@ -394,7 +394,7 @@ export default function App() {
         </section>
 
         {/* Education Section */}
-        <section id="experience" className="py-24 px-4 max-w-5xl mx-auto">
+        <section id="education" className="py-24 px-4 max-w-5xl mx-auto">
           <FadeInSection>
             <div className="flex items-center gap-4 mb-16">
               <span className={`font-mono text-sm tracking-wider transition-colors ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>01.</span>
@@ -435,7 +435,7 @@ export default function App() {
         </section>
 
         {/* Technical Arsenal */}
-        <section id="about" className="py-24 px-4 max-w-[85rem] mx-auto">
+        <section id="skills" className="py-24 px-4 max-w-[85rem] mx-auto">
           <FadeInSection>
             <div className="flex items-center gap-4 mb-16">
               <span className={`font-mono text-sm tracking-wider transition-colors ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>02.</span>

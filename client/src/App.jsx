@@ -50,6 +50,62 @@ const SKILL_ICON_MAP = {
   Server,
 };
 
+const BubbleBackground = ({ isDark }) => {
+  const [bubbles, setBubbles] = useState([]);
+
+  useEffect(() => {
+    const generateBubbles = () => {
+      const newBubbles = Array.from({ length: 20 }, (_, i) => {
+        const size = Math.random() * (160 - 40) + 40;
+        const left = Math.random() * 100;
+        const duration = Math.random() * (15 - 8) + 8;
+        const delay = -Math.random() * 5;
+        const xOffset = (Math.random() - 0.5) * 200;
+        const yStart = Math.random() * 100;
+        
+        return {
+          id: i,
+          size,
+          left,
+          duration,
+          delay,
+          xOffset,
+          yStart
+        };
+      });
+      setBubbles(newBubbles);
+    };
+
+    generateBubbles();
+  }, []);
+
+  return (
+    <>
+      {bubbles.map((bubble) => (
+        <div
+          key={bubble.id}
+          className="bubble"
+          style={{
+            left: `${bubble.left}%`,
+            bottom: `${bubble.yStart}vh`, 
+            width: `${bubble.size}px`,
+            height: `${bubble.size}px`,
+            animation: `bubble-float ${bubble.duration}s linear ${bubble.delay}s infinite`,
+            background: isDark 
+              ? `radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.4), rgba(129, 140, 248, 0.15))`
+              : `radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.3), rgba(129, 140, 248, 0.1))`,
+            border: isDark 
+              ? '1px solid rgba(99, 102, 241, 0.4)'
+              : '1px solid rgba(99, 102, 241, 0.25)',
+            transform: `translateX(${bubble.xOffset}px)`,
+            zIndex: 1
+          }}
+        />
+      ))}
+    </>
+  );
+};
+
 const globalStyles = `
   @keyframes float {
     0% { transform: translateY(0px); }
@@ -58,6 +114,29 @@ const globalStyles = `
   }
   .animate-float {
     animation: float 6s ease-in-out infinite;
+  }
+  @keyframes bubble-float {
+    0% {
+      transform: translateY(0px) translateX(0px);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.5;
+    }
+    90% {
+      opacity: 0.5;
+    }
+    100% {
+      transform: translateY(-100vh) translateX(100px);
+      opacity: 0;
+    }
+  }
+  .bubble {
+    position: fixed;
+    bottom: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: bubble-float linear infinite;
   }
   .bg-grid-pattern-dark {
     background-image: radial-gradient(rgba(128, 128, 128, 0.1) 1px, transparent 1px);
@@ -268,6 +347,7 @@ export default function App() {
       <div className={`fixed inset-0 pointer-events-none z-0 ${isDark ? 'bg-grid-pattern-dark opacity-30' : 'bg-grid-pattern-light opacity-25'}`} />
       <div className={`fixed top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full blur-[150px] pointer-events-none z-0 transition-all duration-700 ${isDark ? 'bg-indigo-900/20' : 'bg-indigo-100/50'}`} />
       <div className={`fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full blur-[150px] pointer-events-none z-0 transition-all duration-700 ${isDark ? 'bg-fuchsia-900/10' : 'bg-indigo-50/50'}`} />
+      <BubbleBackground isDark={isDark} />
 
       {/* Navigation */}
       <nav className={`fixed w-full top-0 z-50 transition-all duration-500 border-b ${
@@ -283,7 +363,7 @@ export default function App() {
               }`}>
                 <span className={`text-sm font-bold font-mono tracking-wider ${isDark ? 'text-slate-200' : 'text-indigo-600'}`}>GE</span>
               </div>
-              <span className={`font-semibold tracking-tight hidden sm:block transition-colors ${isDark ? 'text-slate-200 group-hover:text-white' : 'text-slate-800 group-hover:text-indigo-600'}`}>Eshwarnath.</span>
+              <span className={`font-semibold tracking-tight hidden sm:block transition-colors ${isDark ? 'text-slate-200 group-hover:text-white' : 'text-slate-800 group-hover:text-indigo-600'}`}>Eshwarnath</span>
             </div>
             
             <div className="hidden md:flex items-center space-x-1">
@@ -352,13 +432,13 @@ export default function App() {
                 <p className={`font-medium tracking-wide mb-3 text-lg md:text-xl transition-colors ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`}>Hi, my name is</p>
                 <h1 className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter leading-[1.1] transition-colors ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
                   Gajula <br className="hidden sm:block" />
-                  <span className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-700 bg-clip-text text-transparent">Eshwarnath.</span>
+                  <span className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-700 bg-clip-text text-transparent">Eshwarnath</span>
                 </h1>
               </FadeInSection>
               
               <FadeInSection delay={300}>
                 <p className={`text-lg md:text-xl mb-10 leading-relaxed font-light max-w-2xl transition-colors ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-                  I am a Full-Stack and Mobile Developer currently pursuing my B.Tech in Computer Science at Amrita Vishwa Vidyapeetham. I work primarily with the MERN stack and Flutter, and I take my projects seriously — whether that means integrating a genetic algorithm to reduce scheduling conflicts or building secure, role-based platforms from scratch.
+                  I am an AI Engineer pursuing a B.Tech in Computer Science at Amrita Vishwa Vidyapeetham. I develop intelligent applications powered by LLMs, AI agents, and modern full-stack technologies, with a focus on building practical AI systems that solve real-world problems through automation and personalization.
                 </p>
               </FadeInSection>
               
@@ -738,14 +818,14 @@ export default function App() {
             <a href="https://github.com/Eshwarnath24" target="_blank" rel="noreferrer" className={`p-3 rounded-full border transition-all duration-300 shadow-md ${
               isDark ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-indigo-400' : 'bg-white border-slate-300 text-slate-500 hover:text-indigo-600 hover:border-indigo-400'
             }`}><GithubIcon size={20} /></a>
-            <a href="https://linkedin.com/in/eshwarnath-gajula-0193752b1" target="_blank" rel="noreferrer" className={`p-3 rounded-full border transition-all duration-300 shadow-md ${
+            <a href="https://linkedin.com/in/eshwarnath" target="_blank" rel="noreferrer" className={`p-3 rounded-full border transition-all duration-300 shadow-md ${
               isDark ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-indigo-400' : 'bg-white border-slate-300 text-slate-500 hover:text-indigo-600 hover:border-indigo-400'
             }`}><LinkedinIcon size={20} /></a>
             <a href="mailto:gajulaeshwarnath24@gmail.com" className={`p-3 rounded-full border transition-all duration-300 shadow-md ${
               isDark ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-indigo-400' : 'bg-white border-slate-300 text-slate-500 hover:text-indigo-600 hover:border-indigo-400'
             }`}><Mail size={20} /></a>
           </div>
-          <p className={`text-sm font-mono transition-colors ${isDark ? 'text-slate-500' : 'text-slate-600'}`}>Designed & Built with <Sparkles size={12} className="inline text-indigo-500 mb-1" /> by Gajula Eshwarnath</p>
+          <p className={`text-sm font-mono transition-colors ${isDark ? 'text-slate-500' : 'text-slate-600'}`}>Designed & Built by Gajula Eshwarnath</p>
         </footer>
       </main>
     </div>

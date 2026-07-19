@@ -5,7 +5,7 @@ export const EDUCATION = [
 		institution: "Amrita Vishwa Vidyapeetham",
 		degree: "B.Tech Computer Science Engineering",
 		duration: "August 2023 - May 2027",
-		score: "CGPA: 7.73 (5th Sem)",
+		score: "CGPA: 7.69 (6th Sem)",
 	},
 	{
 		institution: "Ignite Junior College",
@@ -37,24 +37,70 @@ export const SKILLS = [
 	{
 		title: "Databases",
 		iconKey: "Database",
-		items: ["MongoDB", "Firebase", "SQFlite"],
+		items: ["MongoDB", "Firebase", "SQLite"],
 		color: "text-amber-400",
+	},
+	{
+		title: "AI & LLM",
+		iconKey: "Bot",
+		items: [
+			"OpenAI API",
+			"Gemini API",
+			"LangChain",
+			"CrewAI",
+			"Prompt Engineering",
+			"RAG",
+			"Vector Embeddings"
+		],
+		color: "text-cyan-400",
 	},
 	{
 		title: "Libraries & Technologies",
 		iconKey: "GitBranch",
-		items: ["Pandas", "NumPy", "Matplotlib", "Seaborn", "Flexbox", "Git"],
+		items: [
+			"Pandas",
+			"NumPy",
+			"Matplotlib",
+			"Seaborn",
+			"OpenCV",
+			"Flexbox",
+			"Git"
+		],
 		color: "text-fuchsia-400",
 	},
 	{
 		title: "Tools",
 		iconKey: "Server",
-		items: ["GitHub", "Figma", "Google Colab", "VS Code"],
+		items: [
+			"GitHub",
+			"Figma",
+			"Google Colab",
+			"VS Code",
+			"Postman",
+			"Docker"
+		],
 		color: "text-rose-400",
 	},
 ];
 
 export const PROJECTS = [
+	{
+		id: "gitaura",
+		title: "GitAura",
+		duration: "Jun 2026",
+		description: [
+			"Built an AI-powered career platform integrating resume analysis, GitHub-aware resume tailoring, dynamic mock interviews, and job matching into a unified application.",
+			"Developed a repository-aware resume tailoring engine that analyzes users' GitHub projects alongside job descriptions to prioritize relevant work, optimize ATS keywords, and generate role-specific resumes without fabricating content.",
+			"Designed a stateful AI interviewer with adaptive multi-phase interviews (Personal → Projects → Technical → HR), generating personalized questions from the candidate's resume and GitHub repositories with detailed post-interview evaluation.",
+			"Implemented a modular FastAPI architecture with specialized AI agents, LaTeX PDF generation, ATS analysis, and real-time job matching using Gemini, LangChain, MongoDB, and React."
+		],
+		tags: [
+			"React", "FastAPI", "MongoDB", "Gemini", "LangChain", "Python", "LaTeX", "Jinja2", "JWT", "Tailwind CSS"
+		],
+		githubUrl: "https://github.com/Eshwarnath24/GitAura.git",
+		liveUrl: "https://git-aura-pi.vercel.app/",
+		isMobile: false,
+	},
 	{
 		id: "schedai",
 		title: "SchedAI",
@@ -125,6 +171,7 @@ export const PROJECTS = [
 		isMobile: false,
 	}
 ];
+
 
 export const CERTIFICATIONS = [
 	{
